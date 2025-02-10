@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #qrCode {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="startScreen">
+        <button onclick="showForm()">I am ready to create QR</button>
+    </div>
+    
+    <div class="container" id="formScreen" style="display: none;">
+        <h2>Enter Your Details</h2>
+        <form id="qrForm">
+            <div class="form-group"><input type="text" name="fullName" placeholder="Full Name" required></div>
+            <div class="form-group"><input type="text" name="fatherName" placeholder="Father Name" required></div>
+            <div class="form-group"><input type="text" name="motherName" placeholder="Mother Name" required></div>
+            <div class="form-group"><input type="text" name="aadharNumber" placeholder="Aadhar Number" required></div>
+            <div class="form-group"><input type="text" name="address" placeholder="Address" required></div>
+            <div class="form-group"><input type="email" name="email" placeholder="Email" required></div>
+            <div class="form-group"><input type="text" name="phoneNumber" placeholder="Phone Number" required></div>
+            <div class="form-group"><input type="date" name="dob" required></div>
+            <div class="form-group">
+                <select name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <button type="button" onclick="generateQR()">Create QR</button>
+        </form>
+    </div>
+    
+    <div class="container" id="qrScreen" style="display: none;">
+        <h2>Your QR Code</h2>
+        <div id="qrCode"></div>
+        <button onclick="downloadQR()">Download QR</button>
+    </div>
+    
+    <script>
+        function showForm() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('formScreen').style.display = 'block';
+        }
+
+        function generateQR() {
+            let formData = {};
+            document.querySelectorAll('#qrForm input, #qrForm select').forEach(input => {
+                formData[input.name] = input.value;
+            });
+            let qrText = JSON.stringify(formData);
+            document.getElementById('formScreen').style.display = 'none';
+            document.getElementById('qrScreen').style.display = 'block';
+            new QRCode(document.getElementById('qrCode'), qrText);
+        }
+
+        function downloadQR() {
+            let qrCanvas = document.querySelector('#qrCode canvas');
+            let qrURL = qrCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            let link = document.createElement('a');
+            link.href = qrURL;
+            link.download = 'QRCode.png';
+            link.click();
+        }
+    </script>
+</body>
+</html>
